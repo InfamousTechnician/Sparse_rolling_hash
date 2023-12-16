@@ -7,7 +7,8 @@ count = 1000 # number of vectors
 
 sparse_vectors = [[rdi(0,maximum) if (rdi(0,100) < sparcity) else 0 for _ in range(length)] for _ in range(count)]
 print("done :)")
-def sparse_rolling_hash(spv, val_prime, dim_prime):
+
+def sparse_rolling_hash(spv, val_prime, dim_prime): # my contribution :)
     ret_val = [0 for _ in range(dim_prime)]
     for idx in range(len(spv)):
         ret_val[idx % dim_prime] += spv[idx]
