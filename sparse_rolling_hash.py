@@ -1,9 +1,10 @@
 from random import randint as rdi
+import time
 
 maximum = 114 # integer range
 sparcity = 3 # percent
 length = 2048 # vector length
-count = 1000 # number of vectors
+count = 10000 # number of vectors
 
 sparse_vectors = [[rdi(0,maximum) if (rdi(0,100) < sparcity) else 0 for _ in range(length)] for _ in range(count)]
 print("done :)")
@@ -29,13 +30,13 @@ def KNN(vectors, K, v_in): # KNN search algo
     for vidx in range(len(vectors)):
         distance = 0
         for idx in range(len(v_in)):
-            distance += v_in[idx] * vectors[vidx][idx]
+            distance += ((v_in[idx] - vectors[vidx][idx])**2)
         distance **= 0.5
         for idx in range(K):
             if distance < distances[idx]:
                 nearests[idx] = vidx
                 distances[idx] = distance
-                break # to be improved: this theoretically needed the list to be order first!
+                break
     return nearests
 
 K = 10 # looking so many nearest neighbours
@@ -48,24 +49,34 @@ for _ in range(20): # running tests
     
     # looking for K nearest neighbours in compressed format
     compressed_start = sparse_rolling_hash(center, val_prime, dim_prime)
+    
+    start = time.time()
     compressed_near = KNN(compressed, K, compressed_start)
-    print(compressed_near)
+    end = time.time()
+    print(compressed_near, end-start)
 
     # testing for the really nearest K neighbours of the original dataset
+    start = time.time()
     sheer_near = KNN(sparse_vectors, K, center)
-    print(sheer_near)
+    end = time.time()
+    print(sheer_near, end-start)
 
     # comparing results by total distances
     total = 0
     for next_compressed_near_one in compressed_near:
+        distance = 0
         for idx in range(len(sparse_vectors[starter])):
-            total += (center[idx]**2 + sparse_vectors[next_compressed_near_one][idx]**2)**0.5 
+            distance += ((center[idx] - sparse_vectors[next_compressed_near_one][idx])**2)
+        total += (distance ** 0.5)
     print(total)
 
     total = 0
     for next_near_one in sheer_near:
+        distance = 0
         for idx in range(len(sparse_vectors[starter])):
-            total += (center[idx]**2 + sparse_vectors[next_near_one][idx]**2)**0.5 
+            distance += ((center[idx] - sparse_vectors[next_near_one][idx])**2)
+        total += (distance ** 0.5)
+        
     print(total)
     print()
 
