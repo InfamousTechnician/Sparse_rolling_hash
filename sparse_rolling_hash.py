@@ -35,7 +35,7 @@ def KNN(vectors, K, v_in): # KNN search algo
             if distance < distances[idx]:
                 nearests[idx] = vidx
                 distances[idx] = distance
-                break
+                break # to be improved: this theoretically needed the list to be order first!
     return nearests
 
 K = 10 # looking so many nearest neighbours
